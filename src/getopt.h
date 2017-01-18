@@ -27,6 +27,20 @@
 extern "C" {
 #endif
 
+#ifdef __KLIBC__
+/* OS/2 kLIBC has already getopt(). So to avoid name clash, rename
+   them here. */
+
+#define optarg  liba52_optarg
+#define optind  liba52_optind
+#define opterr  liba52_opterr
+#define optopt  liba52_optopt
+
+#define getopt              liba52_getopt
+#define getopt_long         liba52_getopt_long
+#define getopt_long_only    liba52_getopt_long_only
+#endif
+
 /* For communication from `getopt' to the caller.
    When `getopt' finds an option that takes an argument,
    the argument value is returned here.
