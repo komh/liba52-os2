@@ -1,0 +1,50 @@
+name: CI-linux-x64-os2emx
+
+on:
+  workflow_dispatch:
+
+  push:
+    paths-ignore:
+      - '.gitignore'
+      - '.github/FUNDING.yml'
+
+  pull_request:
+    paths-ignore:
+      - '.gitignore'
+      - '.github/FUNDING.yml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup cross-os2emx
+        uses: komh/setup-cross-os2emx@v1
+
+      - name: Bootstrap
+        run: |
+          autoreconf -fvi -I "$OS2EMX_PREFIX/share/aclocal"
+
+      - name: Configure
+        run: |
+          chmod +x configure
+          mkdir build
+          cd build
+          ../configure --host=i686-pc-os2-emx --prefix="/@unixroot/usr" \
+                       --enable-shared --enable-static CFLAGS="-g -O2 -std=c99"
+
+      - name: Build
+        run: |
+          make -C build
+
+      - name: Install
+        run: |
+          make -C build install DESTDIR="${{ github.workspace }}/liba52"
