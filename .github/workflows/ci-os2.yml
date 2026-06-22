@@ -39,7 +39,7 @@ jobs:
           mkdir build
           cd build
           ../configure --host=i686-pc-os2-emx --prefix="/@unixroot/usr" \
-                       --enable-shared --enable-static CFLAGS="-g -O2 -std=c99"
+                       --enable-shared --enable-static CC="i686-pc-os2-emx-gcc -std=c99"
 
       - name: Build
         run: |
